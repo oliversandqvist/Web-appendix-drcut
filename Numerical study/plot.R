@@ -123,14 +123,14 @@ dfResCI <- dfResCI %>% left_join(Va.value.grid, by=c("X"))
 
 ##CI empirical coverages with DR HAL and DR Oracle using standard errors outputted by lprobust
 
-SeConstant <- 2^{7/18-1/2}
+SeConstant <- 1/sqrt(2)
 
 dfResCIPlot <- dfResCI %>% 
   filter(estimator %in% c("DR","DR.Oracle") ) %>%
   group_by(X,n,estimator) %>%
-  summarise(pct99 = 100-sum(abs(Pred-VaTrue) > 2^{7/18-1/2}*2.58*SE)/n()*100, 
-            pct95 = 100-sum(abs(Pred-VaTrue) > 2^{7/18-1/2}*1.96*SE)/n()*100,
-            pct90 = 100-sum(abs(Pred-VaTrue) > 2^{7/18-1/2}*1.65*SE)/n()*100) %>%
+  summarise(pct99 = 100-sum(abs(Pred-VaTrue) > SeConstant*2.58*SE)/n()*100, 
+            pct95 = 100-sum(abs(Pred-VaTrue) > SeConstant*1.96*SE)/n()*100,
+            pct90 = 100-sum(abs(Pred-VaTrue) > SeConstant*1.65*SE)/n()*100) %>%
   pivot_longer(cols=starts_with("pct"),names_to="significance")
 
 png("Figures/CoveragePlot.png", width = 12, height = 7, units = 'in', res = 600)
@@ -146,12 +146,18 @@ ggplot(aes(y = value, x = X, color=significance, linetype=estimator),
   geom_hline(yintercept=90, color="gray80", lty=2, lwd=1.2) +
   facet_grid(. ~ n) +
   scale_linetype_manual(values=c(1,3)) +
-  ylab(expression(paste("empirical coverage"))) +
+  ylab(expression(paste("Empirical coverage"))) +
   xlab("W") +
   theme(text = element_text(size = 24),
         strip.text = element_text(size=22, face="bold")) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(legend.position = "bottom")
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) +
+  theme(legend.position = "bottom",
+        legend.key.size = unit(1.25, 'cm'),
+        legend.title = element_text(size=22),
+        legend.text = element_text(size = 20)) +
+  scale_color_discrete(name = "Significance", labels = c("90%", "95%", "99%")) +
+  scale_linetype_discrete(name = "Estimator", labels = c("DR", "DR oracle")) 
 
 dev.off()
 

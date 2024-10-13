@@ -536,7 +536,7 @@ if(seed == 1 & nsim == max(nsims)){
   
   plot(x.grid,vaPred,type="l", ylim=c(0.8,1.21), lwd=2, xlab="W", ylab="Expected illness duration")
   lines(x.grid,vaDRDf1Pred$Estimate[,"tau.us"]*0.5+vaDRDf2Pred$Estimate[,"tau.us"]*0.5, col="ForestGreen")
-  SeConstant <- 2^{7/18-1/2}
+  SeConstant <- 1/sqrt(2)
   lines(x.grid,(vaDRDf1Pred$Estimate[,"tau.us"]+1.96*SeConstant*vaDRDf1Pred$Estimate[,"se.us"])*0.5+(vaDRDf2Pred$Estimate[,"tau.us"]+1.96*SeConstant*vaDRDf2Pred$Estimate[,"se.us"])*0.5, col="blue", lty=2)
   lines(x.grid,(vaDRDf1Pred$Estimate[,"tau.us"]-1.96*SeConstant*vaDRDf1Pred$Estimate[,"se.us"])*0.5+(vaDRDf2Pred$Estimate[,"tau.us"]-1.96*SeConstant*vaDRDf2Pred$Estimate[,"se.us"])*0.5, col="blue", lty=2)
   legend("topright", legend=c("True value","DR HAL","95% confidence band"),
